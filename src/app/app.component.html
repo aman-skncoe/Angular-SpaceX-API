@@ -1,127 +1,130 @@
-<html>
 <!-- <div *ngIf="spinner" class="loader">Loading...</div> -->
+<!-- <label class="switch" (click)=successfulLaunch($event)>
+  <input type="checkbox" checked>
+  <span class="slider round">True</span>
+</label>
 <div *ngIf="!spinner" class="loader">Loading...</div>
-<h1>SpaceX Launch program</h1>
+<h1>SpaceX Launch program</h1> -->
 
-<body>
-	<div class="float-container" *ngIf="spinner">
-		<div class="float-child">
-			<div class="sideNav">
-				<h3>Filters</h3>
-				<div class="line"></div>
-				<ul *ngIf="uniqueYears">
-					<ul id="yearList" *ngFor="let course of uniqueYears; let index = index">
+<div class="float-container" *ngIf="spinner">
+	<div class="float-child">
+		<div class="sideNav">
+			<h3>Filters</h3>
+			<div class="line"></div>
+			<ul *ngIf="uniqueYears">
+				<ul id="yearList" *ngFor="let course of uniqueYears; let index = index">
 
-						<button (click)="getDataByYear(course)" id="listButton">
+					<button (click)="getData(course, 'year')" id="listButton" [class.highlighted] = "filters.year == course">
               {{ course }}
             </button>
-					</ul>
 				</ul>
-				<div>Successful Launch</div>
-				<div class="line"></div>
-				<div>
-					<span style="display:flex">
-            <button id="launchAndLand" (click)=successfulLaunch()>
+			</ul>
+			<div>Successful Launch</div>
+			<div class="line"></div>
+			<div>
+				<span style="display:flex">
+            <button id="launchAndLand" (click)= "getData(0, 'isLaunched')" [class.highlighted] = "filters.isLaunched == 0">
               True
             </button>
-            <button id="launchAndLand" (click)=unsuccessfulLaunch()>
+            <button id="launchAndLand" (click)= "getData(1, 'isLaunched')"  [class.highlighted] = "filters.isLaunched == 1">
               False
             </button>
           </span>
-				</div>
-				<div>
-					Successful Landing
-				</div>
-				<div class="line"></div>
-				<div>
-					<span  style="display:flex;">
-            <button id="launchAndLand" (click)=successfulLand()>
+			</div>
+			<div>
+				Successful Landing
+			</div>
+			<div class="line"></div>
+			<div>
+				<span  style="display:flex;">
+            <button id="buttonLand" (click)="getData(0, 'isLanded')"  [class.highlighted] = "filters.isLanded == 0">
               True
             </button>
-            <button id="launchAndLand" (click)=unsuccessfulLand()>
+            <button id="buttonLand" (click)="getData(1,  'isLanded')"  [class.highlighted] = "filters.isLanded == 1">
               False
             </button>
           </span>
-				</div>
-			</div>
-		</div>
-		<div id="apiDataVisual">
-
-			<div class="row" *ngIf="apiAllData">
-				<div class="column" *ngFor="let course of apiAllData.slice(0, 20)">
-					<div class="card" style="background-color: #f1f1f1">
-						<img [src]="course.links.mission_patch_small" style="height:160px;">
-						<h3>{{course.mission_name}}
-							<span>#{{course.flight_number}}</span>
-						</h3>
-						<p style="font-weight: bold;">Launch Year:{{course.launch_year}}</p>
-						<p style="font-weight: bold;">Launch Success: {{course.launch_success}}</p>
-						<!-- <p>Landing Success: {{course.landing_success}}</p> -->
-					</div>
-				</div>
-			</div>
-			<div class="row" *ngIf="!apiAllData && launchSuccess ">
-				<div class="column" *ngFor="let launch of launchSuccess.slice(0, 100)">
-					<div class="card">
-						<img [src]="launch.links.mission_patch_small" style="height:160px; background-color: #f1f1f1">
-						<h3>{{launch.mission_name}}
-							<span>#{{launch.flight_number}}</span>
-						</h3>
-						<p style="font-weight: bold;">Launch Year:{{launch.launch_year}}</p>
-						<p style="font-weight: bold;">Launch Success: {{launch.launch_success}}</p>
-						<!-- <p>Landing Success: {{course.landing_success}}</p> -->
-					</div>
-				</div>
-			</div>
-
-			<div class="row" *ngIf="!apiAllData && !launchSuccess && launchFail ">
-				<div class="column" *ngFor="let launch of launchFail.slice(0, 100)">
-					<div class="card">
-						<img [src]="launch.links.mission_patch_small" style="height:160px; background-color: #f1f1f1">
-						<h3>{{launch.mission_name}}
-							<span>#{{launch.flight_number}}</span>
-						</h3>
-						<p style="font-weight: bold;">Launch Year:{{launch.launch_year}}</p>
-						<p style="font-weight: bold;">Launch Success: {{launch.launch_success}}</p>
-						<!-- <p>Landing Success: {{course.landing_success}}</p> -->
-					</div>
-				</div>
-			</div>
-
-
-			<div class="row" *ngIf="!apiAllData && !launchSuccess && !launchFail && successfulLandValue">
-				<div class="column" *ngFor="let launch of successfulLandValue.slice(0, 100)">
-					<div class="card">
-						<img [src]="launch.links.mission_patch_small" style="height:160px; background-color: #f1f1f1">
-						<h3>{{launch.mission_name}}
-							<span>#{{launch.flight_number}}</span>
-						</h3>
-						<p style="font-weight: bold;">Launch Year:{{launch.launch_year}}</p>
-						<p style="font-weight: bold;">Launch Success: {{launch.launch_success}}</p>
-						<p style="font-weight: bold;">Land Success: {{launch.rocket.first_stage.cores[0].land_success}}
-						</p>
-						<!-- <p>Landing Success: {{course.landing_success}}</p> -->
-					</div>
-				</div>
-			</div>
-			<div class="row"
-				*ngIf="!apiAllData && !launchSuccess && !launchFail && !successfulLandValue && unsuccessfulLandValue">
-				<div class="column" *ngFor="let launch of unsuccessfulLandValue.slice(0, 100)">
-					<div class="card">
-						<img [src]="launch.links.mission_patch_small" style="height:160px; background-color: #f1f1f1">
-						<h3>{{launch.mission_name}}
-							<span>#{{launch.flight_number}}</span>
-						</h3>
-						<p style="font-weight: bold;">Launch Year:{{launch.launch_year}}</p>
-						<p style="font-weight: bold;">Launch Success: {{launch.launch_success}}</p>
-						<p style="font-weight: bold;">Land Success: {{launch.rocket.first_stage.cores[0].land_success}}
-						</p>
-						<!-- <p>Landing Success: {{course.landing_success}}</p> -->
-					</div>
-				</div>
 			</div>
 		</div>
 	</div>
-</body>
+	<div id="apiDataVisual">
 
-</html>
+		<div class="row" *ngIf="courses">
+			<div class="column" *ngFor="let course of courses.slice(0, 100)">
+				<div class="card" style="background-color: #f1f1f1">
+					<img [src]="course.links.mission_patch_small" style="height:160px;">
+					<h3>{{course.mission_name}}
+						<span>#{{course.flight_number}}</span>
+					</h3>
+					<p style="font-weight: bold;">Launch Year:{{course.launch_year}}</p>
+					<p style="font-weight: bold;">Launch Success: {{course.launch_success}}</p>
+					<p *ngIf="course.rocket.first_stage.cores[0].land_success == undefined" style="font-weight: bold;">
+						Land Success: Not Found</p>
+					<p *ngIf="course.rocket.first_stage.cores[0].land_success" style="font-weight: bold;">Land Success:
+						{{course.rocket.first_stage.cores[0].land_success}}</p>
+					<p *ngIf="course.rocket.first_stage.cores[0].land_success == false" style="font-weight: bold;">Land
+						Success: {{course.rocket.first_stage.cores[0].land_success}}</p>
+
+					<!-- <p>Landing Success: {{course.landing_success}}</p> -->
+				</div>
+			</div>
+		</div>
+		<!-- <div class="row" *ngIf="!apiAllData && launchSuccess ">
+        <div class="column" *ngFor="let launch of launchSuccess.slice(0, 100)">
+          <div class="card">
+            <img [src]="launch.links.mission_patch_small" style="height:160px; background-color: #f1f1f1">
+            <h3>{{launch.mission_name}}
+              <span>#{{launch.flight_number}}</span>
+            </h3>
+            <p style="font-weight: bold;">Launch Year:{{launch.launch_year}}</p>
+            <p style="font-weight: bold;">Launch Success: {{launch.launch_success}}</p>
+            <p>Landing Success: {{course.landing_success}}</p>
+          </div>
+        </div>
+      </div> -->
+
+		<!-- <div class="row" *ngIf="!apiAllData && !launchSuccess && launchFail ">
+        <div class="column" *ngFor="let launch of launchFail.slice(0, 100)">
+          <div class="card">
+            <img [src]="launch.links.mission_patch_small" style="height:160px; background-color: #f1f1f1">
+            <h3>{{launch.mission_name}}
+              <span>#{{launch.flight_number}}</span>
+            </h3>
+            <p style="font-weight: bold;">Launch Year:{{launch.launch_year}}</p>
+            <p style="font-weight: bold;">Launch Success: {{launch.launch_success}}</p>
+            <p>Landing Success: {{course.landing_success}}</p>
+          </div>
+        </div>
+      </div> -->
+
+
+		<!-- <div class="row" *ngIf="!apiAllData && !launchSuccess && !launchFail && successfulLandValue">
+        <div class="column" *ngFor="let launch of successfulLandValue.slice(0, 100)">
+          <div class="card">
+            <img [src]="launch.links.mission_patch_small" style="height:160px; background-color: #f1f1f1">
+            <h3>{{launch.mission_name}}
+              <span>#{{launch.flight_number}}</span>
+            </h3>
+            <p style="font-weight: bold;">Launch Year:{{launch.launch_year}}</p>
+            <p style="font-weight: bold;">Launch Success: {{launch.launch_success}}</p>
+            <p style="font-weight: bold;">Land Success: {{launch.rocket.first_stage.cores[0].land_success}}</p>
+            <p>Landing Success: {{course.landing_success}}</p>
+          </div>
+        </div>
+      </div> -->
+		<!-- <div class="row" *ngIf="!apiAllData && !launchSuccess && !launchFail && !successfulLandValue && unsuccessfulLandValue">
+        <div class="column" *ngFor="let launch of unsuccessfulLandValue.slice(0, 100)">
+          <div class="card">
+            <img [src]="launch.links.mission_patch_small" style="height:160px; background-color: #f1f1f1">
+            <h3>{{launch.mission_name}}
+              <span>#{{launch.flight_number}}</span>
+            </h3>
+            <p style="font-weight: bold;">Launch Year:{{launch.launch_year}}</p>
+            <p style="font-weight: bold;">Launch Success: {{launch.launch_success}}</p>
+            <p style="font-weight: bold;">Land Success: {{launch.rocket.first_stage.cores[0].land_success}}</p>
+            <p>Landing Success: {{course.landing_success}}</p>
+          </div>
+        </div>
+      </div> -->
+	</div>
+</div>
